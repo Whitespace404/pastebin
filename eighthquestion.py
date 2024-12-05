@@ -1,71 +1,51 @@
 import pickle
 
 
+def input_dictionary():
+    ch = ""
+    dictionary = dict()
+    while ch != "n":
+        Cid = input("Enter item ID: ")
+        name = input("Enter gift name: ")
+        cost = int(input("Enter cost: "))
+
+        dictionary[Cid] = [name, cost]
+
+        ch = input("Would you like to add another? (y/n) ")
+
+    return dictionary
+
+
 def create():
-    f = open("items.dat", "wb")
-    f.close()
-
-
-def write():
-    f = open("items.dat", "ab")
-    id_ = input("Enter ID: ")
-    gift = input("Gift name: ")
-    cost = input("Enter cost: ")
-    data = [id_, gift, cost]
-    pickle.dump(data, f)
-    f.close()
+    with open("08.dat", "wb") as file:
+        pickle.dump(input_dictionary(), file)
 
 
 def read():
-    f = open("items.dat", "rb")
-    try:
-        while True:
-            line = pickle.load(f)
-            print(line)
-    except EOFError:
-        pass
+    with open("08.dat", "rb") as file:
+        d = pickle.load(file)
+        print(d)
 
 
-def UPDATEINFO():
-    gr = input("Enter the name to update: ")
-    f = open("items.dat", "rb")
+def update():
+    with open("08.dat", "rb") as file:
+        d = pickle.load(file)
 
-    lines = []
-    try:
-        while True:
-            line = pickle.load(f)
-            lines.append(line)
-    except EOFError:
-        pass
+    name = input("Enter the name of the item to update: ")
 
-    gift_names = [line[1] for line in lines]
-    index = gift_names.index(gr)
+    for Cid in d:
+        if d[Cid][0] == name:
+            new_cost = int(input("Enter the new cost: "))
+            d[Cid][1] = new_cost
+            break
+    else:
+        print("Item not found")
 
-    attribute = int(
-        input(
-            """
-Which attribute would you like to update?
-0: ID
-1: Gift name
-2: Cost
-
-> """
-        )
-    )
-    updated_value = input("What would you like to modify it to?")
-    lines[index][attribute] = updated_value
-
-    f.close()
-
-    fil = open("items.dat", "wb")
-    for l in lines:
-        pickle.dump(l, fil)
-    fil.close()
+    with open("08.dat", "wb") as file:
+        pickle.dump(d, file)
 
 
-# UNCOMMENT IF YOU ARE RUNNING FOR THE FIRST TIME
-# create()
-# write()
+create()
 read()
-UPDATEINFO()
+update()
 read()
